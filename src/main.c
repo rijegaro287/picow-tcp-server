@@ -6,6 +6,9 @@
 #include "constants.h"
 
 
+const char *SSID = "Familia Gatgens";
+const char *PASSWORD = "adita123";
+
 int main() {
 	stdio_init_all();
 
@@ -20,8 +23,7 @@ int main() {
 		return PICO_ERROR_INVALID_DATA;
 	}
 
-	uint32_t connection = tcp_server_connect("Familia Gatgens", "adita123");
-	if(connection != CYW43_STATUS_SUCCESS) {
+	if(tcp_server_connect(SSID, PASSWORD) != CYW43_STATUS_SUCCESS) {
 		printf("Failed to connect to network\n");
 		return PICO_ERROR_CONNECT_FAILED;
 	}
