@@ -1,6 +1,39 @@
-
 #include "tcp_server.h"
 
+
+extern TCP_SERVER_T* tcp_server_init(uint16_t port,
+																		 uint32_t buffer_size,
+																		 err_t (*cb)(void *arg, uint32_t buffer_size)) {
+	_PORT = port;
+	_BUFFER_SIZE = buffer_size;
+	_PROCESSING_CB = cb;
+	_SERVER_RUNNING = false;
+
+	if(_BUFFER_SIZE <= 0) {
+		printf("Buffer should be greater than 0\n");
+		return NULL;
+	}
+
+	TCP_SERVER_T *state = calloc(1, sizeof(TCP_SERVER_T));
+	if(!state) {
+		printf("Failed to allocate state\n");
+		return tcp_server_free(state);
+	}
+
+	state->buffer_sent = (uint8_t *)malloc(_BUFFER_SIZE);
+	if(!state->buffer_sent) {
+		printf("Failed to allocate buffer_sent\n");
+		return tcp_server_free(state);
+	}
+
+	state->buffer_recv = (uint8_t *)malloc(_BUFFER_SIZE);
+	if(!state->buffer_recv) {
+		printf("Failed to allocate buffer_recv\n");
+		return tcp_server_free(state);
+	}
+
+	return state;
+}
 
 extern uint32_t tcp_server_connect(const char* ssid, const char* password) {
 	printf("Attempting to connect to network: %s\n", WIFI_SSID);
@@ -29,38 +62,6 @@ extern uint32_t tcp_server_connect(const char* ssid, const char* password) {
 		}
 	}
 	return connection_status;
-}
-
-extern TCP_SERVER_T* tcp_server_init(void) {
-	if(_BUFFER_SIZE == 0) {
-		printf("Buffer size not set\n");
-		return NULL;
-	}
-
-	TCP_SERVER_T *state = calloc(1, sizeof(TCP_SERVER_T));
-	if(!state) {
-		printf("Failed to allocate state\n");
-		return tcp_server_free(state);
-	}
-
-	state->buffer_sent = (uint8_t *)malloc(_BUFFER_SIZE);
-	if(!state->buffer_sent) {
-		printf("Failed to allocate buffer_sent\n");
-		return tcp_server_free(state);
-	}
-
-	state->buffer_recv = (uint8_t *)malloc(_BUFFER_SIZE);
-	if(!state->buffer_recv) {
-		printf("Failed to allocate buffer_recv\n");
-		return tcp_server_free(state);
-	}
-
-	if(!_PROCESSING_CB) {
-		printf("Processing callback not set\n");
-		return tcp_server_free(state);
-	}
-
-	return state;
 }
 
 extern bool tcp_server_open(TCP_SERVER_T *state) {
@@ -97,6 +98,13 @@ extern bool tcp_server_open(TCP_SERVER_T *state) {
 	return true;
 }
 
+extern void tcp_server_await() {
+	_SERVER_RUNNING = true;
+	while(_SERVER_RUNNING) {
+		busy_wait_ms(500);
+	}
+}
+
 extern err_t tcp_server_close(void *arg) {
   printf("Closing TCP server...\n");
 	TCP_SERVER_T *state = (TCP_SERVER_T*)arg;
@@ -126,23 +134,11 @@ extern err_t tcp_server_close(void *arg) {
 
 	tcp_server_free(state);
 
-	stop_server = true;
+	_SERVER_RUNNING = false;
 
-	printf("Server closed\n");
+	printf("TCP Server closed\n");
 
 	return error;
-}
-
-extern void tcp_server_set_port(uint16_t port) {
-	_PORT = port;
-}
-
-extern void tcp_server_set_buffer_size(uint32_t size) {
-	_BUFFER_SIZE = size;
-}
-
-extern void tcp_server_set_processing_cb(err_t (*cb)(void *arg, uint32_t buffer_size)) {
-	_PROCESSING_CB = cb;
 }
 
 extern err_t tcp_server_send_data(void *arg, char* message) {

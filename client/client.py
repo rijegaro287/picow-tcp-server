@@ -1,5 +1,4 @@
 import socket
-import time
 
 ip_addr = "192.168.100.70"
 
