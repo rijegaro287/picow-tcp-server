@@ -52,13 +52,6 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
                            ${CMAKE_CURRENT_LIST_DIR}/..
 )
 
-set(WIFI_SSID "Familia Gatgens")
-set(WIFI_PASSWORD "adita123")
-target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
-                           WIFI_SSID=\"${WIFI_SSID}\"
-                           WIFI_PASSWORD=\"${WIFI_PASSWORD}\"
-)
-
 # Modify the below lines to enable/disable output over UART/USB
 pico_enable_stdio_uart(picow-tcp-server 1)
 pico_enable_stdio_usb(picow-tcp-server 0)

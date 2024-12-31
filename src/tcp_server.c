@@ -36,7 +36,7 @@ extern TCP_SERVER_T* tcp_server_init(uint16_t port,
 }
 
 extern uint32_t tcp_server_connect(const char* ssid, const char* password) {
-	printf("Attempting to connect to network: %s\n", WIFI_SSID);
+	printf("Attempting to connect to network: %s\n", ssid);
 	uint32_t connection_status = CYW43_STATUS_FAIL;
 	while(connection_status != CYW43_STATUS_SUCCESS) {
 		connection_status = cyw43_arch_wifi_connect_blocking(ssid,

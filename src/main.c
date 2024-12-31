@@ -20,7 +20,8 @@ int main() {
 		return PICO_ERROR_INVALID_DATA;
 	}
 
-	if(tcp_server_connect(WIFI_SSID, WIFI_PASSWORD) != CYW43_STATUS_SUCCESS) {
+	uint32_t connection = tcp_server_connect("Familia Gatgens", "adita123");
+	if(connection != CYW43_STATUS_SUCCESS) {
 		printf("Failed to connect to network\n");
 		return PICO_ERROR_CONNECT_FAILED;
 	}
