@@ -101,7 +101,7 @@ extern bool tcp_server_open(TCP_SERVER_T *state) {
 extern void tcp_server_await() {
 	_SERVER_RUNNING = true;
 	while(_SERVER_RUNNING) {
-		busy_wait_ms(500);
+		busy_wait_ms(1);
 	}
 }
 
@@ -141,11 +141,8 @@ extern err_t tcp_server_close(void *arg) {
 	return error;
 }
 
-extern err_t tcp_server_send_data(void *arg, char* message) {
+extern err_t tcp_server_send_data(void *arg) {
 	TCP_SERVER_T *state = (TCP_SERVER_T*)arg;
-
-	memcpy(state->buffer_sent, message, strlen(message));
-	printf("-- Server: %s\n", state->buffer_sent);
 
 	cyw43_arch_lwip_check();
 	err_t error = tcp_write(state->client_pcb,
@@ -209,7 +206,6 @@ static err_t tcp_server_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, er
 	}
 	pbuf_free(p);
 
-	printf("-- Client: %s\n", state->buffer_recv);
 	if(strcmp(state->buffer_recv, "exit") == 0) {
 		return tcp_server_close(arg);
 	}
@@ -218,7 +214,6 @@ static err_t tcp_server_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, er
 	err_t error = _PROCESSING_CB(state, _BUFFER_SIZE);
 
 	memset(state->buffer_recv, 0, _BUFFER_SIZE);
-	memset(state->buffer_sent, 0, _BUFFER_SIZE);
 
 	tcp_close(tpcb);
 
@@ -226,6 +221,8 @@ static err_t tcp_server_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, er
 }
 
 static err_t tcp_server_sent(void *arg, struct tcp_pcb *tpcb, u16_t len) {
+	TCP_SERVER_T *state = (TCP_SERVER_T*)arg;
+	memset(state->buffer_sent, 0, _BUFFER_SIZE);
 	return ERR_OK;
 }
 

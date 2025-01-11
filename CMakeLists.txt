@@ -34,9 +34,6 @@ project(picow-tcp-server C CXX ASM)
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
-# pico_set_program_name(picow-tcp-server "picow-tcp-server")
-# pico_set_program_version(picow-tcp-server "0.1")
-
 set(SOURCES src/main.c
             src/tcp_server.c
             src/processing.c
@@ -73,4 +70,3 @@ target_link_libraries(picow-tcp-server
         )
 
 pico_add_extra_outputs(picow-tcp-server)
-

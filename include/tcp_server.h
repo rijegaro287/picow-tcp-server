@@ -28,7 +28,7 @@ extern bool tcp_server_open(TCP_SERVER_T *state);
 extern void tcp_server_await();
 extern err_t tcp_server_close(void *arg);
 
-extern err_t tcp_server_send_data(void *arg, char* message);
+extern err_t tcp_server_send_data(void *arg);
 
 static err_t tcp_server_accept(void *arg, struct tcp_pcb *client_pcb, err_t err);
 static err_t tcp_server_poll(void *arg, struct tcp_pcb *tpcb);

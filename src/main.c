@@ -6,8 +6,8 @@
 #include "constants.h"
 
 
-const char *SSID = "Familia Gatgens";
-const char *PASSWORD = "adita123";
+const char *SSID = "SSID";
+const char *PASSWORD = "PASSWORD";
 
 int main() {
 	stdio_init_all();
